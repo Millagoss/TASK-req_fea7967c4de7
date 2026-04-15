@@ -1,4 +1,4 @@
-# ---- Stage 1: Composer dependencies ----
+# ---- Stage 1a: Composer dependencies (production, no dev) ----
 FROM composer:2.7 AS vendor
 
 WORKDIR /app
@@ -6,6 +6,20 @@ WORKDIR /app
 COPY composer.json composer.lock* ./
 RUN composer install \
     --no-dev \
+    --no-interaction \
+    --no-plugins \
+    --no-scripts \
+    --prefer-dist \
+    --optimize-autoloader \
+    --ignore-platform-reqs
+
+# ---- Stage 1b: Composer dependencies (with dev, for testing) ----
+FROM composer:2.7 AS vendor-dev
+
+WORKDIR /app
+
+COPY composer.json composer.lock* ./
+RUN composer install \
     --no-interaction \
     --no-plugins \
     --no-scripts \
@@ -78,3 +92,14 @@ EXPOSE 9000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]
+
+# ---- Stage 3: Testing image (dev vendor, no entrypoint wait loop) ----
+FROM production AS testing
+
+USER root
+COPY --from=vendor-dev /app/vendor ./vendor
+RUN chown -R www-data:www-data /var/www/html/vendor
+USER www-data
+
+ENTRYPOINT ["php"]
+CMD ["vendor/bin/phpunit", "--colors=always"]

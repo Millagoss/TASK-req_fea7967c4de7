@@ -21,8 +21,8 @@ return new class extends Migration
 
             // User timeline index
             $table->index(['user_id', 'created_at']);
-            // Dedup lookups index
-            $table->index(['user_id', 'event_type', 'target_id', 'server_timestamp']);
+            // Dedup lookups index (explicit name to stay within MySQL's 64-char identifier limit)
+            $table->index(['user_id', 'event_type', 'target_id', 'server_timestamp'], 'be_dedup_idx');
         });
     }
 

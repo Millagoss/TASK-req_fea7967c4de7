@@ -75,6 +75,22 @@ services:
     networks:
       - meridian_network
 
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: testing
+    environment:
+      APP_ENV: testing
+      APP_KEY: base64:dGVzdGtleXRlc3RrZXl0ZXN0a2V5dGVzdGtleXQ9
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ":memory:"
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+    networks:
+      - meridian_network
+
 volumes:
   db_data:
   app_public:
