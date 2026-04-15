@@ -43,6 +43,8 @@ class AuthController extends Controller
         $currentToken->forceFill(['revoked_at' => Carbon::now()])->save();
         $currentToken->delete();
 
+        auth('sanctum')->forgetUser();
+
         return response()->json(['code' => 200, 'msg' => 'Logged out successfully.']);
     }
 
@@ -54,7 +56,9 @@ class AuthController extends Controller
         $request->user()->tokens()->update(['revoked_at' => Carbon::now()]);
         $request->user()->tokens()->delete();
 
-        return response()->json(['code' => 200, 'msg' => 'All sessions terminated.']);
+        auth('sanctum')->forgetUser();
+
+        return response()->json(['code' => 200, 'message' => 'All sessions terminated.']);
     }
 
     /**

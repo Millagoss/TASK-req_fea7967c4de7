@@ -353,7 +353,7 @@ class ResultController extends Controller
 
         return response()->json([
             'code'          => 200,
-            'msg'           => 'Statistics recomputed successfully.',
+            'message'       => 'Statistics recomputed successfully.',
             'codes_updated' => $count,
         ]);
     }
