@@ -23,7 +23,9 @@ return new class extends Migration
 
             $table->index(['publish_state', 'updated_at']);
             $table->index(['artist', 'title']);
-            $table->fullText(['title', 'artist']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->fullText(['title', 'artist']);
+            }
         });
     }
 

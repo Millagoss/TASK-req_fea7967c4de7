@@ -20,7 +20,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['publish_state', 'updated_at']);
-            $table->fullText(['title', 'description']);
+            if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+                $table->fullText(['title', 'description']);
+            }
         });
     }
 
