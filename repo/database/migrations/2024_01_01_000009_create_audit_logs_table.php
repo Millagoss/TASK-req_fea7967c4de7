@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('action', 100);
             $table->string('resource_type', 100);
             $table->string('resource_id', 100)->default('');
-            $table->char('request_id', 36);
+            $table->char('request_id', 36)->nullable();
             $table->char('before_hash', 64)->nullable();
             $table->char('after_hash', 64)->nullable();
             $table->json('metadata')->nullable();

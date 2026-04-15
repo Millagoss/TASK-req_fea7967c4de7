@@ -31,18 +31,27 @@ class ResultStatisticsService
      */
     public function computeForCode(int $codeId): ResultStatistic
     {
-        $stats = Result::where('measurement_code_id', $codeId)
+        $values = Result::where('measurement_code_id', $codeId)
             ->where('review_status', 'approved')
             ->whereNotNull('value_numeric')
-            ->selectRaw('COUNT(*) as cnt, AVG(value_numeric) as avg_val, STDDEV(value_numeric) as std_val')
-            ->first();
+            ->pluck('value_numeric')
+            ->map(fn ($v) => (float) $v);
+
+        $count = $values->count();
+        $mean = $count > 0 ? $values->avg() : null;
+        $stddev = null;
+
+        if ($count > 0) {
+            $variance = $values->map(fn ($v) => pow($v - $mean, 2))->avg();
+            $stddev = sqrt($variance);
+        }
 
         return ResultStatistic::updateOrCreate(
             ['measurement_code_id' => $codeId],
             [
-                'count'            => $stats->cnt ?? 0,
-                'mean'             => $stats->avg_val,
-                'stddev'           => $stats->std_val,
+                'count'            => $count,
+                'mean'             => $mean,
+                'stddev'           => $stddev,
                 'last_computed_at' => now(),
             ]
         );

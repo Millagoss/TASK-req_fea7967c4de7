@@ -37,7 +37,7 @@ class ProfileComputationServiceTest extends TestCase
             'title'            => $title,
             'artist'           => $artist,
             'duration_seconds' => 200,
-            'audio_quality'    => 'high',
+            'audio_quality'    => 'MP3_320',
             'publish_state'    => $publishState,
             'version_major'    => 1,
             'version_minor'    => 0,
