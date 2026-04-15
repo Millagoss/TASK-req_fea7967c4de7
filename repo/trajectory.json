@@ -1,0 +1,85 @@
+{
+  "project": "Meridian Records & Compliance Backend",
+  "tech_stack": {
+    "framework": "Laravel 11",
+    "language": "PHP 8.3",
+    "database": "MySQL 8.0",
+    "web_server": "Nginx 1.25",
+    "containerization": "Docker Compose"
+  },
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Docker + Laravel Scaffold + Auth & RBAC",
+      "description": "Docker infrastructure, Laravel scaffold, authentication with Sanctum, role-based access control, data scopes, audit logging, service account support",
+      "components": ["Docker", "Nginx", "PHP-FPM", "MySQL", "Sanctum Auth", "RBAC", "Audit Middleware"],
+      "tables": ["users", "roles", "permissions", "role_permission", "user_role", "data_scopes", "login_attempts", "personal_access_tokens", "audit_logs"],
+      "endpoints": 17,
+      "status": "complete"
+    },
+    {
+      "phase": 2,
+      "name": "Music Library",
+      "description": "Full CRUD for songs, albums, playlists with publish lifecycle, semantic versioning, cover art upload, tag management, and full-text search",
+      "components": ["VersioningService", "CoverArtService", "FULLTEXT Search"],
+      "tables": ["songs", "song_tags", "albums", "album_songs", "playlists", "playlist_songs"],
+      "endpoints": 33,
+      "status": "complete"
+    },
+    {
+      "phase": 3,
+      "name": "User Behavior & Analytics",
+      "description": "Event collection with 5-second deduplication, profile modeling with exponential decay (30-day half-life), cold-start and personalized recommendations",
+      "components": ["ProfileComputationService", "RecommendationService", "Dedup Engine"],
+      "tables": ["behavior_events", "user_profiles"],
+      "endpoints": 5,
+      "status": "complete"
+    },
+    {
+      "phase": 4,
+      "name": "Notifications & Task Center",
+      "description": "In-app notification system with template rendering, bulk delivery (10k cap), rate limiting (3/hr/user/template), subscriptions, read receipts",
+      "components": ["NotificationService", "Template Renderer", "Rate Limiter"],
+      "tables": ["notification_templates", "notifications", "notification_subscriptions"],
+      "endpoints": 12,
+      "status": "complete"
+    },
+    {
+      "phase": 5,
+      "name": "Rewards/Penalties",
+      "description": "Evaluation cycles, leader profiles, configurable reward/penalty types, disciplinary records with state machine (active→appealed→cleared), expiration, statistics",
+      "components": ["State Machine", "ExpireRecords Command", "Stats Aggregation"],
+      "tables": ["evaluation_cycles", "leader_profiles", "reward_penalty_types", "disciplinary_records"],
+      "endpoints": 19,
+      "status": "complete"
+    },
+    {
+      "phase": 6,
+      "name": "Result Entry (Lab-style Data Collection)",
+      "description": "Structured measurement entry with 9-step validation pipeline, unit normalization, z-score outlier flagging, reviewer sign-off, CSV import, FHIR-inspired batch API",
+      "components": ["ResultValidationService", "ResultStatisticsService", "CSV Import", "Z-Score Engine"],
+      "tables": ["measurement_codes", "unit_conversions", "subjects", "results", "result_statistics"],
+      "endpoints": 14,
+      "status": "complete"
+    },
+    {
+      "phase": 7,
+      "name": "Cross-cutting Concerns",
+      "description": "Structured JSON logging with request correlation, Auditable trait on 10 models, field masking for PII, nightly MySQL backups with 30-day retention, scheduled tasks",
+      "components": ["RequestIdProcessor", "SensitiveFieldProcessor", "Auditable Trait", "FieldMaskingService", "BackupDatabase Command"],
+      "tables": [],
+      "endpoints": 0,
+      "status": "complete"
+    }
+  ],
+  "total_tables": 32,
+  "total_endpoints": 101,
+  "total_tests": 194,
+  "scheduled_commands": [
+    {"command": "sanctum:prune-expired", "schedule": "daily"},
+    {"command": "profiles:recompute", "schedule": "hourly"},
+    {"command": "records:expire", "schedule": "daily"},
+    {"command": "results:recompute-stats", "schedule": "hourly"},
+    {"command": "backup:run", "schedule": "daily at 02:00"}
+  ]
+}
